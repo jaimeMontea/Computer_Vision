@@ -30,6 +30,24 @@ def evaluate(img_out, img_GT):
     # return ACCU, RECALL, img_out_skel, GT_skel
     print(f"Accuracy = {ACCU}, Recall = {RECALL}")
 
+def evaluate_2(img_out, img_GT):
+    '''
+        inputs: 
+            img_out: segmentation
+            img_GT: verite terrain
+    '''
+    GT_skel  = thin(img_GT, max_num_iter = 15) # On suppose que la demie epaisseur maximum 
+    img_out_skel  = thin(img_out, max_num_iter = 15) # d'un vaisseau est de 15 pixels...
+    TP = np.sum(img_out_skel & img_GT) # Vrais positifs
+    FP = np.sum(img_out_skel & ~img_GT) # Faux positifs
+    FN = np.sum(GT_skel & ~img_out) # Faux negatifs
+
+    ACCU = TP / (TP + FP) # Precision
+    RECALL = TP / (TP + FN) # Rappel
+    return ACCU, RECALL
+    # print(f"Accuracy = {ACCU}, Recall = {RECALL}")
+
+
 def main():
     #Ouvrir l'image originale en niveau de gris
     img =  np.asarray(Image.open('./images_IOSTAR/star01_OSC.jpg')).astype(np.uint8)
